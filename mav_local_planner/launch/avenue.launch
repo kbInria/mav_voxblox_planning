@@ -28,6 +28,9 @@
       <param name="optimize_time" value="true" />
       <param name="verbose" value="true" />
     </node>
+    <node name="goal_pose_handler" pkg="mav_local_planner" type="goal_pose_handler.py" output="screen" clear_params="true">
+      <remap from="next_waypoint" to="new_target" />
+    </node>
   </group>
 
   <group ns="$(arg drone_name)_1">
@@ -51,6 +54,9 @@
       <param name="split_at_collisions" value="true" />
       <param name="optimize_time" value="true" />
       <param name="verbose" value="true" />
+    </node>
+    <node name="goal_pose_handler" pkg="mav_local_planner" type="goal_pose_handler.py" output="screen" clear_params="true">
+      <remap from="next_waypoint" to="new_target" />
     </node>
   </group>
 </launch>
