@@ -1,11 +1,11 @@
 <launch>
-  <arg name="drone_name" default="intelaero_bugwright"/>
+  <arg name="drone_name" default="intelaero_bugwright_"/>
   <arg name="pointcloud_topic" default="velodyn/laser_scan"/>
   <arg name="frame_id" value="world" />
   <arg name="voxel_size" default="0.25" />
   <arg name="do_smoothing" default="false" />
 
-  <group ns="$(arg drone_name)_0">
+  <group ns="$(arg drone_name)0">
     <node name="voxblox_rrt_planner" pkg="voxblox_rrt_planner" type="voxblox_rrt_planner_node" output="screen" clear_params="true">
       <remap from="voxblox_rrt_planner/esdf_map_in" to="/voxblox_node/esdf_map_out" />
       <remap from="voxblox_rrt_planner/tsdf_map_in" to="/voxblox_node/tsdf_map_out" />
@@ -33,7 +33,7 @@
     </node>
   </group>
 
-  <group ns="$(arg drone_name)_1">
+  <group ns="$(arg drone_name)1">
     <node name="voxblox_rrt_planner" pkg="voxblox_rrt_planner" type="voxblox_rrt_planner_node" output="screen" clear_params="true">
       <remap from="voxblox_rrt_planner/esdf_map_in" to="/voxblox_node/esdf_map_out" />
       <remap from="voxblox_rrt_planner/tsdf_map_in" to="/voxblox_node/tsdf_map_out" />
