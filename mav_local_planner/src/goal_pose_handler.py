@@ -72,6 +72,11 @@ class GoalPoseHandler:
         Args:
             msg (nav_msgs.Odometry): Odometry of the agent that should go to the next best viewpoint
         """
+        # Check if the waypoints can be computed
+        if self._last_odom_pose is None:
+            rospy.logdebug_throttle(60, "Did not receive sufficient information to compute waypoints.")
+            return
+
         self._next_best_viewpoint = msg
         # Fill up start and goal pose in the path's mav_planning_msgs sevice request
         plannerRequest = PlannerServiceRequest()
@@ -96,8 +101,8 @@ class GoalPoseHandler:
         """ The waypoints are sent one by one to the receiver so this function ensure that the current waypoint
             is reached before sending the next one. In the meantime, it resend the current target at a rate equal to self._rate. 
         """
-        # Check if the waypoints can be computed
-        if self._last_odom_pose is None or self._current_waypoints is None or not self._current_waypoints:
+        # Check if the waypoints can be sent
+        if self._last_odom_pose is None or self._current_waypoints is None or not self._current_waypoints.poses:
             rospy.logdebug_throttle(60, "Did not receive sufficient information to send waypoints.")
             return
         
