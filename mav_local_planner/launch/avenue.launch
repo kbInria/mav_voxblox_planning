@@ -2,7 +2,7 @@
   <arg name="drone_name" default="intelaero_bugwright_"/>
   <arg name="pointcloud_topic" default="velodyn/laser_scan"/>
   <arg name="frame_id" value="world" />
-  <arg name="robot_radius" default="0.1" />
+  <arg name="robot_radius" default="0.2" />
   <arg name="voxel_size" default="0.25" />
   <arg name="do_smoothing" default="false" />
 
