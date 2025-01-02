@@ -231,7 +231,6 @@ void SkeletonEvalNode::generateMapFromRobotPoses(int num_poses, int seed) {
     // Step 3: integrate into the map.
     // Transform back into camera frame.
     transformPointcloud(T_G_C.inverse(), ptcloud, ptcloud_C.get());
-    voxblox_server_.integratePointcloud(ros::Time::now(), T_G_C, ptcloud_C, colors);
   }
 
   voxblox_server_.updateEsdfBatch(full_euclidean_distance_);

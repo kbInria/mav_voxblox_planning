@@ -269,7 +269,7 @@ void MavLocalPlanner::planningStep() {
   } else {
     // empty sphere of robot position to be observed and free
     mav_trajectory_generation::timing::Timer clear_map_timer("plan/clear_map");
-    voxblox::utils::emptySphereAroundPoint<voxblox::EsdfVoxel>(
+    voxblox::utils::clearSphereAroundPoint<voxblox::EsdfVoxel>(
         odometry_.position_W.cast<float>(), constraints_.robot_radius + 0.1,
         constraints_.robot_radius * 2,
         esdf_server_.getEsdfMapPtr()->getEsdfLayerPtr());
