@@ -4,6 +4,7 @@
 import rospy
 
 from geometry_msgs.msg import Pose
+from std_srvs.srv import Trigger as Srv_Trigger
 from trajectory_msgs.msg import MultiDOFJointTrajectory
 
 ##########################  Helper functions ######################
@@ -43,15 +44,27 @@ class GoalPoseHandler:
         # Create a subscriber
         rospy.Subscriber("command/trajectory", MultiDOFJointTrajectory, self._TrajectoryCB)
 
+        # Create a service client
+        rospy.wait_for_service('~reset_targets')
+
         rospy.loginfo("Finishing goal_pose_handler initialization.")
 
     def _TrajectoryCB(self, msg):
+        # Keep the last trajectory in memory
         self._trajectory_waypoints = msg
 
         if self._trajectory_waypoints is None or not self._trajectory_waypoints.points:
             return
 
-        for point in self._trajectory_waypoints.points:
+        # Reset drone pilot's targets
+        try:
+            reset_target_request = rospy.ServiceProxy('~reset_targets', Srv_Trigger)
+            request_response = reset_target_request()
+        except rospy.ServiceException as e:
+            print("Service call to service reset_targets failed: %s"%e)
+
+        # HACK: somehow, the last transform of mav_local_planner is the initial pose of the trajectory. To be investigated
+        for point in self._trajectory_waypoints.points[:-1]:
             waypoint = ConvertTrajectoryPointToPose(point)
             self._next_waypoint_pub.publish(waypoint)
 

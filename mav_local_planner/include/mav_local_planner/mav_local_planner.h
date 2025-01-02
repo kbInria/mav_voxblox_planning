@@ -31,6 +31,7 @@ namespace mav_planning {
 class MavLocalPlanner {
  public:
   MavLocalPlanner(const ros::NodeHandle& nh, const ros::NodeHandle& nh_private);
+  ~MavLocalPlanner();
 
   // Input data.
   void odometryCallback(const nav_msgs::Odometry& msg);
@@ -58,7 +59,14 @@ class MavLocalPlanner {
   void polynomialTrajectoryCallback(
       const mav_planning_msgs::PolynomialTrajectory4D& msg) {}
 
- private:
+ protected:
+  // Initializing functions.
+  void getParamsFromRos();
+  void setupRosCommunication();
+  void startTimers();
+  void setupMap();
+  void setupSmoothers();
+
   // Control for publishing.
   void startPublishingCommands();
   void commandPublishTimerCallback(const ros::TimerEvent& event);
@@ -71,6 +79,7 @@ class MavLocalPlanner {
   bool nextWaypoint();
   void finishWaypoints();
 
+  void insertPath(const mav_msgs::EigenTrajectoryPointVector& path);
   void replacePath(const mav_msgs::EigenTrajectoryPointVector& path);
 
   // What to do if we fail to find a suitable path, depending on the
@@ -79,11 +88,19 @@ class MavLocalPlanner {
 
   // Functions to help out replanning.
   // Track a single waypoint, planning only in a short known horizon.
-  void avoidCollisionsTowardWaypoint();
+  virtual void avoidCollisionsTowardWaypoint();
   // Get a path through a bunch of waypoints.
   bool planPathThroughWaypoints(
       const mav_msgs::EigenTrajectoryPointVector& waypoints,
       mav_msgs::EigenTrajectoryPointVector* path);
+  // Determine start of (re)planning.
+  void getPlanningStart();
+  // Determine and get a path through waypoints.
+  bool findPathThroughCurrentWaypointList(
+      mav_msgs::EigenTrajectoryPointVector* path,
+      size_t* waypoint_index);
+  // Sample existing path for temporary auxilary waypoints.
+  void sampleExistingPath();
 
   // Map access.
   double getMapDistance(const Eigen::Vector3d& position) const;
@@ -97,6 +114,11 @@ class MavLocalPlanner {
 
   // Other internal stuff.
   void sendCurrentPose();
+
+  // Visualizations.
+  void visualizePlanningStart() const;
+  void visualizeWaypoints(
+      const mav_msgs::EigenTrajectoryPointVector& waypoints) const;
 
   ros::NodeHandle nh_;
   ros::NodeHandle nh_private_;
@@ -177,6 +199,14 @@ class MavLocalPlanner {
   // State -- planning.
   int max_failures_;
   int num_failures_;
+  int num_tracking_;
+  // Existing path
+  bool valid_existing_plan_;
+  mav_msgs::EigenTrajectoryPointVector temporary_waypoints_;
+  // Replanning
+  mav_msgs::EigenTrajectoryPoint planning_start_pose_;
+  size_t planning_index_;
+  mav_msgs::EigenTrajectoryPointVector existing_path_chunk_;
 
   // Map!
   voxblox::EsdfServer esdf_server_;
