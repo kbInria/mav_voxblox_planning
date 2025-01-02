@@ -4,7 +4,7 @@ project(voxblox_skeleton)
 find_package(catkin_simple REQUIRED)
 catkin_simple(ALL_DEPS_REQUIRED)
 
-add_definitions(-std=c++11)
+add_definitions(-std=c++14)
 
 ############
 # PROTOBUF #
@@ -55,6 +55,11 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_proto)
 ############
 # BINARIES #
 ############
+cs_add_executable(skeletonizer_realtime
+  src/skeletonizer_realtime.cpp
+)
+target_link_libraries(skeletonizer_realtime ${PROJECT_NAME})
+
 cs_add_executable(skeletonizer
   src/skeletonizer.cpp
 )
