@@ -48,6 +48,7 @@
     </node>
     <node name="goal_pose_handler" pkg="mav_local_planner" type="goal_pose_handler.py" output="screen" clear_params="true">
       <remap from="next_waypoint" to="new_target" />
+      <remap from="~reset_targets" to="/$(arg drone_name)0/pilot/reset_targets" />
     </node>
   </group>
 
