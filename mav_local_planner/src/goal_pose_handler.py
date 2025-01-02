@@ -50,18 +50,18 @@ class GoalPoseHandler:
         rospy.loginfo("Finishing goal_pose_handler initialization.")
 
     def _TrajectoryCB(self, msg):
+        # Keep the last trajectory in memory
+        self._trajectory_waypoints = msg
+
+        if self._trajectory_waypoints is None or not self._trajectory_waypoints.points:
+            return
+
         # Reset drone pilot's targets
         try:
             reset_target_request = rospy.ServiceProxy('~reset_targets', Srv_Trigger)
             request_response = reset_target_request()
         except rospy.ServiceException as e:
             print("Service call to service reset_targets failed: %s"%e)
-
-        # Keep the last trajectory in memory
-        self._trajectory_waypoints = msg
-
-        if self._trajectory_waypoints is None or not self._trajectory_waypoints.points:
-            return
 
         # HACK: somehow, the last transform of mav_local_planner is the initial pose of the trajectory. To be investigated
         for point in self._trajectory_waypoints.points[:-1]:
