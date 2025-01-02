@@ -63,7 +63,8 @@ class GoalPoseHandler:
         if self._trajectory_waypoints is None or not self._trajectory_waypoints.points:
             return
 
-        for point in self._trajectory_waypoints.points:
+        # HACK: somehow, the last transform of mav_local_planner is the initial pose of the trajectory. To be investigated
+        for point in self._trajectory_waypoints.points[:-1]:
             waypoint = ConvertTrajectoryPointToPose(point)
             self._next_waypoint_pub.publish(waypoint)
 
