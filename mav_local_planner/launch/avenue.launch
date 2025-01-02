@@ -1,0 +1,98 @@
+<launch>
+  <arg name="drone_name" default="intelaero_bugwright_"/>
+  <arg name="pointcloud_topic" default="velodyn/laser_scan"/>
+  <arg name="frame_id" value="world" />
+  <arg name="robot_radius" default="0.1" />
+  <arg name="voxel_size" default="0.25" />
+  <arg name="do_smoothing" default="false" />
+
+  <group ns="$(arg drone_name)0">
+    <node name="mav_local_planner" pkg="mav_local_planner" type="mav_local_planner_node" args="-alsologtostderr" output="screen" clear_params="true">
+      <remap from="odometry" to="groundtruth/odom" />
+      <remap from="waypoint" to="next_best_viewpoint" />
+      <remap from="waypoint_list" to="next_best_viewpoint_list" />
+      <remap from="mav_local_planner/esdf_map_in" to="/voxblox_node/esdf_map_out" />
+      <remap from="mav_local_planner/tsdf_map_in" to="/voxblox_node/tsdf_map_out" />
+
+      <param name="tsdf_voxel_size" value="$(arg voxel_size)" />
+      <param name="tsdf_voxels_per_side" value="8" />
+      <param name="esdf_max_distance_m" value="2.0" />
+      <param name="update_mesh_every_n_sec" value="0.0" />
+      <param name="traversability_radius" value="$(arg robot_radius)" />
+      <param name="publish_traversable" value="true" />
+      <param name="slice_level" value="1.0" />
+      <param name="publish_slices" value="true" />
+
+      <param name="local_frame_id" value="$(arg frame_id)" />
+      <param name="world_frame" value="$(arg frame_id)" />
+      <param name="replan_dt" value="0.5" />
+      <param name="plan_to_start" value="true" />
+      <param name="command_publishing_dt" value="5.0" />
+      <param name="replan_lookahead_sec" value="1.0" />
+      <param name="mpc_prediction_horizon" value="300" />
+
+      <param name="robot_radius" value="$(arg robot_radius)" />
+      <param name="planning_horizon_m" value="20.0" />
+      <param name="autostart" value="true" />
+      <param name="verbose" value="true" />
+      <param name="v_max" value="5.0" />
+      <param name="a_max" value="2.0" />
+      <!-- TODO: currently avoid collision do not work but should look into it -->
+      <param name="avoid_collisions" value="false" />
+
+      <!-- What to do in case of failure. -->
+      <param name="goal_selector_strategy" value="none" />
+      <param name="smoother_name" value="loco" />
+      <param name="use_shotgun" value="true" />
+      <param name="use_shotgun_path" value="true" />
+    </node>
+    <node name="goal_pose_handler" pkg="mav_local_planner" type="goal_pose_handler.py" output="screen" clear_params="true">
+      <remap from="next_waypoint" to="new_target" />
+    </node>
+  </group>
+
+  <group ns="$(arg drone_name)1">
+    <node name="mav_local_planner" pkg="mav_local_planner" type="mav_local_planner_node" args="-alsologtostderr" output="screen" clear_params="true">
+      <remap from="odometry" to="groundtruth/odom" />
+      <remap from="waypoint" to="next_best_viewpoint" />
+      <remap from="waypoint_list" to="next_best_viewpoint_list" />
+      <remap from="mav_local_planner/esdf_map_in" to="/voxblox_node/esdf_map_out" />
+      <remap from="mav_local_planner/tsdf_map_in" to="/voxblox_node/tsdf_map_out" />
+
+      <param name="tsdf_voxel_size" value="$(arg voxel_size)" />
+      <param name="tsdf_voxels_per_side" value="8" />
+      <param name="esdf_max_distance_m" value="2.0" />
+      <param name="update_mesh_every_n_sec" value="0.0" />
+      <param name="traversability_radius" value="$(arg robot_radius)" />
+      <param name="publish_traversable" value="true" />
+      <param name="slice_level" value="1.0" />
+      <param name="publish_slices" value="true" />
+
+      <param name="local_frame_id" value="$(arg frame_id)" />
+      <param name="world_frame" value="$(arg frame_id)" />
+      <param name="replan_dt" value="0.5" />
+      <param name="plan_to_start" value="true" />
+      <param name="command_publishing_dt" value="5.0" />
+      <param name="replan_lookahead_sec" value="1.0" />
+      <param name="mpc_prediction_horizon" value="300" />
+
+      <param name="robot_radius" value="$(arg robot_radius)" />
+      <param name="planning_horizon_m" value="20.0" />
+      <param name="autostart" value="true" />
+      <param name="verbose" value="true" />
+      <param name="v_max" value="5.0" />
+      <param name="a_max" value="2.0" />
+      <!-- TODO: currently avoid collision do not work but should look into it -->
+      <param name="avoid_collisions" value="false" />
+
+      <!-- What to do in case of failure. -->
+      <param name="goal_selector_strategy" value="none" />
+      <param name="smoother_name" value="loco" />
+      <param name="use_shotgun" value="true" />
+      <param name="use_shotgun_path" value="true" />
+    </node>
+    <node name="goal_pose_handler" pkg="mav_local_planner" type="goal_pose_handler.py" output="screen" clear_params="true">
+      <remap from="next_waypoint" to="new_target" />
+    </node>
+  </group>
+</launch>
