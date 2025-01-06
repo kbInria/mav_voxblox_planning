@@ -4,7 +4,8 @@
   <arg name="frame_id" value="world" />
   <arg name="robot_radius" default="0.1" />
   <arg name="voxel_size" default="0.25" />
-  <arg name="do_smoothing" default="false" />
+  <arg name="voxels_per_side" default="8" />
+  <arg name="avoid_collisions" default="false" />
 
   <group ns="$(arg drone_name)0">
     <node name="mav_local_planner" pkg="mav_local_planner" type="mav_local_planner_node" args="-alsologtostderr" output="screen" clear_params="true">
@@ -15,7 +16,7 @@
       <remap from="mav_local_planner/tsdf_map_in" to="/voxblox_node/tsdf_map_out" />
 
       <param name="tsdf_voxel_size" value="$(arg voxel_size)" />
-      <param name="tsdf_voxels_per_side" value="8" />
+      <param name="tsdf_voxels_per_side" value="$(arg voxels_per_side)" />
       <param name="esdf_max_distance_m" value="2.0" />
       <param name="update_mesh_every_n_sec" value="0.0" />
       <param name="traversability_radius" value="$(arg robot_radius)" />
@@ -38,7 +39,7 @@
       <param name="v_max" value="5.0" />
       <param name="a_max" value="2.0" />
       <!-- TODO: currently avoid collision do not work but should look into it -->
-      <param name="avoid_collisions" value="false" />
+      <param name="avoid_collisions" value="$(arg avoid_collisions)" />
 
       <!-- What to do in case of failure. -->
       <param name="goal_selector_strategy" value="none" />
@@ -61,7 +62,7 @@
       <remap from="mav_local_planner/tsdf_map_in" to="/voxblox_node/tsdf_map_out" />
 
       <param name="tsdf_voxel_size" value="$(arg voxel_size)" />
-      <param name="tsdf_voxels_per_side" value="8" />
+      <param name="tsdf_voxels_per_side" value="$(arg voxels_per_side)" />
       <param name="esdf_max_distance_m" value="2.0" />
       <param name="update_mesh_every_n_sec" value="0.0" />
       <param name="traversability_radius" value="$(arg robot_radius)" />
@@ -84,7 +85,7 @@
       <param name="v_max" value="5.0" />
       <param name="a_max" value="2.0" />
       <!-- TODO: currently avoid collision do not work but should look into it -->
-      <param name="avoid_collisions" value="false" />
+      <param name="avoid_collisions" value="$(arg avoid_collisions)" />
 
       <!-- What to do in case of failure. -->
       <param name="goal_selector_strategy" value="none" />
@@ -94,6 +95,7 @@
     </node>
     <node name="goal_pose_handler" pkg="mav_local_planner" type="goal_pose_handler.py" output="screen" clear_params="true">
       <remap from="next_waypoint" to="new_target" />
+      <remap from="~reset_targets" to="/$(arg drone_name)0/pilot/reset_targets" />
     </node>
   </group>
 </launch>
