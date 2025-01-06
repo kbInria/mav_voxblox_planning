@@ -29,7 +29,7 @@ RUN catkin init \
 WORKDIR /opt/catkin_ws/src/
 
 # Clone the ROS package from GitHub
-RUN git clone --single-branch --branch dev/avenue https://github.com/kbInria/mav_voxblox_planning.git \
+RUN git clone --single-branch --branch feature/improved_replanning https://github.com/kbInria/mav_voxblox_planning.git \
     && wstool init . /opt/catkin_ws/src/mav_voxblox_planning/install/install_https.rosinstall \
     && wstool update
 # Removing CATKIN_IGNORE because -DCMAKE_CXX_STANDARD=14 fixed voxblox_rrt_planner build
