@@ -2,10 +2,14 @@
   <arg name="drone_name" default="intelaero_bugwright_"/>
   <arg name="pointcloud_topic" default="velodyn/laser_scan"/>
   <arg name="frame_id" value="world" />
-  <arg name="robot_radius" default="0.1" />
+  <arg name="robot_radius" default="0.25" />
   <arg name="voxel_size" default="0.25" />
   <arg name="voxels_per_side" default="8" />
   <arg name="avoid_collisions" default="false" />
+  <arg name="command_publishing_dt" default="40.0" />
+  <arg name="v_max" default="6.0" />
+  <arg name="a_max" default="0.8" />
+  <arg name="yaw_rate_max" default="0.2" />
 
   <group ns="$(arg drone_name)0">
     <node name="mav_local_planner" pkg="mav_local_planner" type="mav_local_planner_node" args="-alsologtostderr" output="screen" clear_params="true">
@@ -26,9 +30,13 @@
 
       <param name="local_frame_id" value="$(arg frame_id)" />
       <param name="world_frame" value="$(arg frame_id)" />
-      <param name="replan_dt" value="0.5" />
+      <!-- HACK: "disabling" command publishing -->
+      <param name="command_publishing_dt" value="$(arg command_publishing_dt)" />
+      <!-- No need to replan if no command is republished -->
+      <param name="replan_dt" value="$(arg command_publishing_dt)" />
+      <!-- Important parameter to control how the drone will follow the trajectory -->
+      <param name="sampling_dt" value="0.8" />
       <param name="plan_to_start" value="true" />
-      <param name="command_publishing_dt" value="5.0" />
       <param name="replan_lookahead_sec" value="1.0" />
       <param name="mpc_prediction_horizon" value="300" />
 
@@ -36,8 +44,10 @@
       <param name="planning_horizon_m" value="20.0" />
       <param name="autostart" value="true" />
       <param name="verbose" value="true" />
-      <param name="v_max" value="5.0" />
-      <param name="a_max" value="2.0" />
+      <!-- Parameters in charge of the curvature of trajectory -->
+      <param name="v_max" value="$(arg v_max)" />
+      <param name="a_max" value="$(arg a_max)" />
+      <param name="yaw_rate_max" value="$(arg yaw_rate_max)" />
       <!-- TODO: currently avoid collision do not work but should look into it -->
       <param name="avoid_collisions" value="$(arg avoid_collisions)" />
 
@@ -72,9 +82,13 @@
 
       <param name="local_frame_id" value="$(arg frame_id)" />
       <param name="world_frame" value="$(arg frame_id)" />
-      <param name="replan_dt" value="0.5" />
+      <!-- HACK: "disabling" command publishing -->
+      <param name="command_publishing_dt" value="$(arg command_publishing_dt)" />
+      <!-- No need to replan if no command is republished -->
+      <param name="replan_dt" value="$(arg command_publishing_dt)" />
+      <!-- Important parameter to control how the drone will follow the trajectory -->
+      <param name="sampling_dt" value="0.8" />
       <param name="plan_to_start" value="true" />
-      <param name="command_publishing_dt" value="5.0" />
       <param name="replan_lookahead_sec" value="1.0" />
       <param name="mpc_prediction_horizon" value="300" />
 
@@ -82,8 +96,10 @@
       <param name="planning_horizon_m" value="20.0" />
       <param name="autostart" value="true" />
       <param name="verbose" value="true" />
-      <param name="v_max" value="5.0" />
-      <param name="a_max" value="2.0" />
+      <!-- Parameters in charge of the curvature of trajectory -->
+      <param name="v_max" value="$(arg v_max)" />
+      <param name="a_max" value="$(arg a_max)" />
+      <param name="yaw_rate_max" value="$(arg yaw_rate_max)" />
       <!-- TODO: currently avoid collision do not work but should look into it -->
       <param name="avoid_collisions" value="$(arg avoid_collisions)" />
 
