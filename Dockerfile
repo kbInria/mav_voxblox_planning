@@ -28,11 +28,17 @@ RUN catkin init \
 # Set the working directory
 WORKDIR /opt/catkin_ws/src/
 
-# Clone the ROS package from GitHub
-RUN git clone --single-branch --branch dev/avenue https://github.com/kbInria/mav_voxblox_planning.git \
-    && wstool init . /opt/catkin_ws/src/mav_voxblox_planning/install/install_https.rosinstall \
+# Clone the repository and get the commit to be checkout at from the docker-compose.yaml file
+ARG BRANCH='dev/avenue'
+ARG BRANCH_COMMIT=$BRANCH # Checkout the last commit per default
+RUN git clone --single-branch --branch $BRANCH https://github.com/kbInria/mav_voxblox_planning.git \ 
+    && cd /opt/catkin_ws/src/mav_voxblox_planning/ \
+    && echo "The commit to be check out is: $BRANCH_COMMIT" \
+    && git checkout $BRANCH_COMMIT
+
+# Install the package's dependencies
+RUN wstool init . /opt/catkin_ws/src/mav_voxblox_planning/install/install_https.rosinstall \
     && wstool update
-# Removing CATKIN_IGNORE because -DCMAKE_CXX_STANDARD=14 fixed voxblox_rrt_planner build
 
 # # Go back to the workspace root
 WORKDIR /opt/catkin_ws/
