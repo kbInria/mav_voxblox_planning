@@ -1,6 +1,7 @@
 <launch>
   <arg name="drone_name" default="intelaero_bugwright_"/>
   <arg name="pointcloud_topic" default="velodyn/laser_scan"/>
+  <arg name="use_goal_handler" default="true" />
   <arg name="frame_id" value="world" />
   <arg name="robot_radius" default="0.25" />
   <arg name="voxel_size" default="0.25" />
@@ -10,6 +11,7 @@
   <arg name="v_max" default="6.0" />
   <arg name="a_max" default="0.8" />
   <arg name="yaw_rate_max" default="0.2" />
+  <arg name="sampling_dt" default="0.3" />
 
   <group ns="$(arg drone_name)0">
     <node name="mav_local_planner" pkg="mav_local_planner" type="mav_local_planner_node" args="-alsologtostderr" output="screen" clear_params="true">
@@ -35,7 +37,7 @@
       <!-- No need to replan if no command is republished -->
       <param name="replan_dt" value="$(arg command_publishing_dt)" />
       <!-- Important parameter to control how the drone will follow the trajectory -->
-      <param name="sampling_dt" value="0.8" />
+      <param name="sampling_dt" value="$(arg sampling_dt)" />
       <param name="plan_to_start" value="true" />
       <param name="replan_lookahead_sec" value="1.0" />
       <param name="mpc_prediction_horizon" value="300" />
@@ -57,7 +59,7 @@
       <param name="use_shotgun" value="true" />
       <param name="use_shotgun_path" value="true" />
     </node>
-    <node name="goal_pose_handler" pkg="mav_local_planner" type="goal_pose_handler.py" output="screen" clear_params="true">
+    <node if="$(arg use_goal_handler)" name="goal_pose_handler" pkg="mav_local_planner" type="goal_pose_handler.py" output="screen" clear_params="true">
       <remap from="next_waypoint" to="new_target" />
       <remap from="~reset_targets" to="/$(arg drone_name)0/pilot/reset_targets" />
     </node>
@@ -87,7 +89,7 @@
       <!-- No need to replan if no command is republished -->
       <param name="replan_dt" value="$(arg command_publishing_dt)" />
       <!-- Important parameter to control how the drone will follow the trajectory -->
-      <param name="sampling_dt" value="0.8" />
+      <param name="sampling_dt" value="$(arg sampling_dt)" />
       <param name="plan_to_start" value="true" />
       <param name="replan_lookahead_sec" value="1.0" />
       <param name="mpc_prediction_horizon" value="300" />
@@ -109,7 +111,7 @@
       <param name="use_shotgun" value="true" />
       <param name="use_shotgun_path" value="true" />
     </node>
-    <node name="goal_pose_handler" pkg="mav_local_planner" type="goal_pose_handler.py" output="screen" clear_params="true">
+    <node if="$(arg use_goal_handler)" name="goal_pose_handler" pkg="mav_local_planner" type="goal_pose_handler.py" output="screen" clear_params="true">
       <remap from="next_waypoint" to="new_target" />
       <remap from="~reset_targets" to="/$(arg drone_name)0/pilot/reset_targets" />
     </node>
