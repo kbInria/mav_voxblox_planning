@@ -1,7 +1,6 @@
 <launch>
-  <arg name="drone_name" default="intelaero_bugwright_"/>
+  <arg name="drone_name" default="intelaero_bugwright"/>
   <arg name="pointcloud_topic" default="velodyn/laser_scan"/>
-  <arg name="use_goal_handler" default="true" />
   <arg name="frame_id" value="world" />
   <arg name="robot_radius" default="0.25" />
   <arg name="voxel_size" default="0.25" />
@@ -13,7 +12,7 @@
   <arg name="yaw_rate_max" default="0.2" />
   <arg name="sampling_dt" default="0.3" />
 
-  <group ns="$(arg drone_name)0">
+  <group ns="$(arg drone_name)_0">
     <node name="mav_local_planner" pkg="mav_local_planner" type="mav_local_planner_node" args="-alsologtostderr" output="screen" clear_params="true">
       <remap from="odometry" to="groundtruth/odom" />
       <remap from="waypoint" to="next_best_viewpoint" />
@@ -30,7 +29,7 @@
       <param name="slice_level" value="1.0" />
       <param name="publish_slices" value="true" />
 
-      <param name="local_frame_id" value="$(arg drone_name)0/map" />
+      <param name="local_frame_id" value="$(arg drone_name)_0/map" />
       <param name="world_frame" value="$(arg frame_id)" />
       <!-- HACK: "disabling" command publishing -->
       <param name="command_publishing_dt" value="$(arg command_publishing_dt)" />
@@ -58,14 +57,10 @@
       <param name="smoother_name" value="loco" />
       <param name="use_shotgun" value="true" />
       <param name="use_shotgun_path" value="true" />
-    </node>
-    <node if="$(arg use_goal_handler)" name="goal_pose_handler" pkg="mav_local_planner" type="goal_pose_handler.py" output="screen" clear_params="true">
-      <remap from="next_waypoint" to="new_target" />
-      <remap from="~reset_targets" to="/$(arg drone_name)0/pilot/reset_targets" />
     </node>
   </group>
 
-  <group ns="$(arg drone_name)1">
+  <group ns="$(arg drone_name)_1">
     <node name="mav_local_planner" pkg="mav_local_planner" type="mav_local_planner_node" args="-alsologtostderr" output="screen" clear_params="true">
       <remap from="odometry" to="groundtruth/odom" />
       <remap from="waypoint" to="next_best_viewpoint" />
@@ -82,7 +77,7 @@
       <param name="slice_level" value="1.0" />
       <param name="publish_slices" value="true" />
 
-      <param name="local_frame_id" value="$(arg drone_name)1/map" />
+      <param name="local_frame_id" value="$(arg drone_name)_1/map" />
       <param name="world_frame" value="$(arg frame_id)" />
       <!-- HACK: "disabling" command publishing -->
       <param name="command_publishing_dt" value="$(arg command_publishing_dt)" />
@@ -110,10 +105,6 @@
       <param name="smoother_name" value="loco" />
       <param name="use_shotgun" value="true" />
       <param name="use_shotgun_path" value="true" />
-    </node>
-    <node if="$(arg use_goal_handler)" name="goal_pose_handler" pkg="mav_local_planner" type="goal_pose_handler.py" output="screen" clear_params="true">
-      <remap from="next_waypoint" to="new_target" />
-      <remap from="~reset_targets" to="/$(arg drone_name)0/pilot/reset_targets" />
     </node>
   </group>
 </launch>
