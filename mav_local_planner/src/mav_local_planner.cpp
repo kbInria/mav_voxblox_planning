@@ -622,6 +622,7 @@ void MavLocalPlanner::visualizePath() {
     path_marker = createMarkerForPath(path_queue_, local_frame_id_,
                                       mav_visualization::Color::Black(),
                                       "local_path", 0.05);
+    path_marker.id = full_trajectory_marker_.markers.size();
   }
   full_trajectory_marker_.markers.push_back(path_marker);
   path_marker_pub_.publish(full_trajectory_marker_);
