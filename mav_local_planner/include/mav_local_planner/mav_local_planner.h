@@ -111,6 +111,9 @@ class MavLocalPlanner {
   ros::Publisher path_marker_pub_;
   ros::Publisher full_trajectory_pub_;
 
+  // Marker array to keep the full trajectory in memory
+  visualization_msgs::MarkerArray full_trajectory_marker_;
+
   // Service calls for controlling the local planner.
   // Start will start publishing commands, pause will stop temporarily and you
   // can call start to un-pause, and stop will stop and clear the current

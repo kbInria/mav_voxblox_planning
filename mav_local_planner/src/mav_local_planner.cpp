@@ -615,7 +615,6 @@ bool MavLocalPlanner::stopCallback(std_srvs::Empty::Request& request,
 
 void MavLocalPlanner::visualizePath() {
   // TODO: Split trajectory into two chunks: before and after.
-  visualization_msgs::MarkerArray marker_array;
   visualization_msgs::Marker path_marker;
   {
     std::lock_guard<std::recursive_mutex> guard(path_mutex_);
@@ -624,8 +623,8 @@ void MavLocalPlanner::visualizePath() {
                                       mav_visualization::Color::Black(),
                                       "local_path", 0.05);
   }
-  marker_array.markers.push_back(path_marker);
-  path_marker_pub_.publish(marker_array);
+  full_trajectory_marker_.markers.push_back(path_marker);
+  path_marker_pub_.publish(full_trajectory_marker_);
 }
 
 double MavLocalPlanner::getMapDistance(const Eigen::Vector3d& position) const {
