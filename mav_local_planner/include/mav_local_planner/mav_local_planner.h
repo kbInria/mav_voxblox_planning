@@ -26,6 +26,8 @@
 #include <voxblox_loco_planner/voxblox_loco_planner.h>
 #include <voxblox_ros/esdf_server.h>
 
+#include "mav_local_planner/mav_idle_checker.h"
+
 namespace mav_planning {
 
 class MavLocalPlanner {
@@ -198,6 +200,9 @@ class MavLocalPlanner {
   // Intermediate goal selection, optionally in case of path-planning failures:
   GoalPointSelector goal_selector_;
   bool temporary_goal_;
+
+  // Idle checker
+  IdleChecker idle_checker_;
 };
 
 }  // namespace mav_planning

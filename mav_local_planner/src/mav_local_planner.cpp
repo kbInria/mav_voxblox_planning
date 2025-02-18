@@ -118,10 +118,14 @@ MavLocalPlanner::MavLocalPlanner(const ros::NodeHandle& nh,
   loco_smoother_.setResampleTrajectory(true);
   loco_smoother_.setResampleVisibility(true);
   loco_smoother_.setNumSegments(5);
+
+  // Idle checker
+  idle_checker_ = IdleChecker(10, 0.1);
 }
 
 void MavLocalPlanner::odometryCallback(const nav_msgs::Odometry& msg) {
   mav_msgs::eigenOdometryFromMsg(msg, &odometry_);
+  idle_checker_.AddOdometry(msg);
 }
 
 void MavLocalPlanner::waypointCallback(const geometry_msgs::PoseStamped& msg) {
@@ -181,6 +185,9 @@ void MavLocalPlanner::planningTimerCallback(const ros::TimerEvent& event) {
 }
 
 void MavLocalPlanner::planningStep() {
+  bool is_idle = idle_checker_.IsIdle();
+  ROS_INFO("Drone is currently %s" is_idle, ? "idle" : "moving");
+
   ROS_INFO(
       "[Mav Local Planner][Plan Step] Waypoint index: %zd Total waypoints: %zu",
       current_waypoint_, waypoints_.size());
