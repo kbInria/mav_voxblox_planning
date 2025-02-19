@@ -186,7 +186,7 @@ void MavLocalPlanner::planningTimerCallback(const ros::TimerEvent& event) {
 
 void MavLocalPlanner::planningStep() {
   bool is_idle = idle_checker_.IsIdle();
-  ROS_INFO("Drone is currently %s" is_idle, ? "idle" : "moving");
+  ROS_INFO("Drone is currently %s", is_idle ? "idle" : "moving");
 
   ROS_INFO(
       "[Mav Local Planner][Plan Step] Waypoint index: %zd Total waypoints: %zu",
