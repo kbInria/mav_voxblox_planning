@@ -67,6 +67,8 @@ MavLocalPlanner::MavLocalPlanner(const ros::NodeHandle& nh,
       nh_private_.advertise<trajectory_msgs::MultiDOFJointTrajectory>(
           "full_trajectory", 1, true);
 
+  id_idle_pub_ = nh_private_.advertise<std_msgs::Bool>("is_idle", 1, true);
+
   // Services.
   start_srv_ = nh_private_.advertiseService(
       "start", &MavLocalPlanner::startCallback, this);
@@ -120,12 +122,19 @@ MavLocalPlanner::MavLocalPlanner(const ros::NodeHandle& nh,
   loco_smoother_.setNumSegments(5);
 
   // Idle checker
-  idle_checker_ = IdleChecker(10, 0.1);
+  int idle_queue_size = 10;
+  double min_speed_treshold = 0.1;
+  nh_private_.param("idle_queue_size", idle_queue_size, idle_queue_size);
+  nh_private_.param("min_speed_treshold", min_speed_treshold, min_speed_treshold);
+  idle_checker_ = IdleChecker(idle_queue_size, min_speed_treshold);
 }
 
 void MavLocalPlanner::odometryCallback(const nav_msgs::Odometry& msg) {
   mav_msgs::eigenOdometryFromMsg(msg, &odometry_);
   idle_checker_.AddOdometry(msg);
+  std_msgs::Bool is_idle_msg;
+  is_idle_msg.data = idle_checker_.IsIdle();
+  id_idle_pub_.publish(is_idle_msg);
 }
 
 void MavLocalPlanner::waypointCallback(const geometry_msgs::PoseStamped& msg) {
@@ -185,9 +194,6 @@ void MavLocalPlanner::planningTimerCallback(const ros::TimerEvent& event) {
 }
 
 void MavLocalPlanner::planningStep() {
-  bool is_idle = idle_checker_.IsIdle();
-  ROS_INFO("Drone is currently %s", is_idle ? "idle" : "moving");
-
   ROS_INFO(
       "[Mav Local Planner][Plan Step] Waypoint index: %zd Total waypoints: %zu",
       current_waypoint_, waypoints_.size());

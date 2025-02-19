@@ -11,6 +11,8 @@
   <arg name="a_max" default="0.8" />
   <arg name="yaw_rate_max" default="0.2" />
   <arg name="sampling_dt" default="0.3" />
+  <arg name="idle_queue_size" default="10" />
+  <arg name="min_speed_treshold" default="0.1" />
 
   <group ns="$(arg drone_name)_0">
     <node name="mav_local_planner" pkg="mav_local_planner" type="mav_local_planner_node" args="-alsologtostderr" output="screen" clear_params="true">
@@ -57,6 +59,10 @@
       <param name="smoother_name" value="loco" />
       <param name="use_shotgun" value="true" />
       <param name="use_shotgun_path" value="true" />
+
+      <!-- Parameters for idle checker -->
+      <param name="idle_queue_size" value="$(arg idle_queue_size)" />
+      <param name="min_speed_treshold" value="$(arg min_speed_treshold)" />
     </node>
   </group>
 

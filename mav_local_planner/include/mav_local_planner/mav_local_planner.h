@@ -6,6 +6,7 @@
 #include <thread>
 #include <vector>
 
+#include <std_msgs/Bool.h>
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <mav_msgs/conversions.h>
@@ -112,6 +113,7 @@ class MavLocalPlanner {
   ros::Publisher command_pub_;
   ros::Publisher path_marker_pub_;
   ros::Publisher full_trajectory_pub_;
+  ros::Publisher id_idle_pub_;
 
   // Marker array to keep the full trajectory in memory
   visualization_msgs::MarkerArray full_trajectory_marker_;
