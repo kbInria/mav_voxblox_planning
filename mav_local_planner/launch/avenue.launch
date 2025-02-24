@@ -21,6 +21,7 @@
       <remap from="waypoint_list" to="next_best_viewpoint_list" />
       <remap from="mav_local_planner/esdf_map_in" to="/voxblox_node/esdf_map_out" />
       <remap from="mav_local_planner/tsdf_map_in" to="/voxblox_node/tsdf_map_out" />
+      <param name="log_file" value="trajectory_$(arg drone_name)_0.txt" />
 
       <param name="tsdf_voxel_size" value="$(arg voxel_size)" />
       <param name="tsdf_voxels_per_side" value="$(arg voxels_per_side)" />
@@ -73,6 +74,7 @@
       <remap from="waypoint_list" to="next_best_viewpoint_list" />
       <remap from="mav_local_planner/esdf_map_in" to="/voxblox_node/esdf_map_out" />
       <remap from="mav_local_planner/tsdf_map_in" to="/voxblox_node/tsdf_map_out" />
+      <param name="log_file" value="trajectory_$(arg drone_name)_1.txt" />
 
       <param name="tsdf_voxel_size" value="$(arg voxel_size)" />
       <param name="tsdf_voxels_per_side" value="$(arg voxels_per_side)" />

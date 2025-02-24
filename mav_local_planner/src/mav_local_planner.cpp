@@ -130,6 +130,7 @@ MavLocalPlanner::MavLocalPlanner(const ros::NodeHandle& nh,
 
   std::string log_dir = "/.ros/log/trajectories/";
   std::string log_file = "trajectory.txt";
+  nh_private_.param("log_file", log_file, log_file);
   logger_.Initialze(log_dir, log_file);
 }
 
