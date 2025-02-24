@@ -37,6 +37,8 @@ class MavLocalPlanner {
  public:
   MavLocalPlanner(const ros::NodeHandle& nh, const ros::NodeHandle& nh_private);
 
+  ~MavLocalPlanner();
+
   // Input data.
   void odometryCallback(const nav_msgs::Odometry& msg);
   void waypointCallback(const geometry_msgs::PoseStamped& msg);
@@ -209,7 +211,8 @@ class MavLocalPlanner {
   IdleChecker idle_checker_;
 
   // Logger
-  Logger logger_;  
+  Logger logger_;
+  double total_trajectory_length_;
 };
 
 }  // namespace mav_planning

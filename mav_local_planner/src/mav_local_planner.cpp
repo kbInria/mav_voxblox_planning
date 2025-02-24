@@ -132,6 +132,12 @@ MavLocalPlanner::MavLocalPlanner(const ros::NodeHandle& nh,
   std::string log_file = "trajectory.txt";
   nh_private_.param("log_file", log_file, log_file);
   logger_.Initialze(log_dir, log_file);
+  total_trajectory_length_ = 0.0;
+}
+
+MavLocalPlanner::~MavLocalPlanner() {
+  std::string last_message = "Stopping local planner. distance traveled: " + std::to_string(total_trajectory_length_) + " m." + "\n";
+  logger_.Log(last_message);
 }
 
 void MavLocalPlanner::odometryCallback(const nav_msgs::Odometry& msg) {
@@ -572,7 +578,9 @@ void MavLocalPlanner::commandPublishTimerCallback(
 
     std::string initial_pose_string = "(" + std::to_string(trajectory_to_publish.front().position_W.x()) + ", " + std::to_string(trajectory_to_publish.front().position_W.y()) + ", " + std::to_string(trajectory_to_publish.front().position_W.z()) + ")";
     std::string final_pose_string = "(" + std::to_string(trajectory_to_publish.back().position_W.x()) + ", " + std::to_string(trajectory_to_publish.back().position_W.y()) + ", " + std::to_string(trajectory_to_publish.back().position_W.z()) + ")";
-    std::string path_distance_string = std::to_string(computePathLength(trajectory_to_publish)) + " m";
+    double current_trajectory_length = computePathLength(trajectory_to_publish);
+    total_trajectory_length_ += current_trajectory_length;
+    std::string path_distance_string = std::to_string(current_trajectory_length) + " m";
     std::string logger_message = "Publishing trajectory from " + initial_pose_string + " to " + final_pose_string + ". Total length = " + path_distance_string + "\n";
     logger_.Log(logger_message);
 
