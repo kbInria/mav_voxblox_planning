@@ -127,6 +127,10 @@ MavLocalPlanner::MavLocalPlanner(const ros::NodeHandle& nh,
   nh_private_.param("idle_queue_size", idle_queue_size, idle_queue_size);
   nh_private_.param("min_speed_treshold", min_speed_treshold, min_speed_treshold);
   idle_checker_ = IdleChecker(idle_queue_size, min_speed_treshold);
+
+  std::string log_dir = "/.ros/log/trajectories/";
+  std::string log_file = "trajectory.txt";
+  logger_.Initialze(log_dir, log_file);
 }
 
 void MavLocalPlanner::odometryCallback(const nav_msgs::Odometry& msg) {
@@ -564,6 +568,11 @@ void MavLocalPlanner::commandPublishTimerCallback(
         trajectory_to_publish.back().time_from_start_ns * 1.0e-9,
         trajectory_to_publish.back().position_W.x());
     mav_msgs::msgMultiDofJointTrajectoryFromEigen(trajectory_to_publish, &msg);
+
+    std::string initial_pose_string = "(" + std::to_string(trajectory_to_publish.front().position_W.x()) + ", " + std::to_string(trajectory_to_publish.front().position_W.y()) + ", " + std::to_string(trajectory_to_publish.front().position_W.z()) + ")";
+    std::string final_pose_string = "(" + std::to_string(trajectory_to_publish.back().position_W.x()) + ", " + std::to_string(trajectory_to_publish.back().position_W.y()) + ", " + std::to_string(trajectory_to_publish.back().position_W.z()) + ")";
+    std::string logger_message = "Publishing trajectory from " + initial_pose_string + " to " + final_pose_string + "\n";
+    logger_.Log(logger_message);
 
     command_pub_.publish(msg);
     path_index_ += number_to_publish;

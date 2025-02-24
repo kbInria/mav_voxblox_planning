@@ -29,6 +29,8 @@
 
 #include "mav_local_planner/mav_idle_checker.h"
 
+#include "mav_local_planner/logger/logger.h"
+
 namespace mav_planning {
 
 class MavLocalPlanner {
@@ -205,6 +207,9 @@ class MavLocalPlanner {
 
   // Idle checker
   IdleChecker idle_checker_;
+
+  // Logger
+  Logger logger_;  
 };
 
 }  // namespace mav_planning
