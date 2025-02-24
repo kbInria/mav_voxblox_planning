@@ -34,7 +34,10 @@ std::string rosTimeToString(const ros::Time& ros_time)
 
 class Logger {
 public:
-    Logger () {}
+    Logger () {
+        logged_msgs_ = 0;
+    }
+
     void Initialze(const std::string log_directory, const std::string log_file) 
     {
         std::cout << "log_directory: " << log_directory << std::endl;
@@ -73,7 +76,7 @@ public:
     {
         if (log_stream_.is_open()) {
             // Log the ending time
-            std::string final_message = "Finishing log at time " + rosTimeToString(ros::Time::now()) + "\n";
+            std::string final_message = "Finishing log at time " + rosTimeToString(ros::Time::now()) + "\n" + "Total logged messages = " + std::to_string(logged_msgs_) + "\n";
             this->Log(final_message);
             log_stream_.close();
         }
@@ -82,6 +85,7 @@ public:
     void Log(const std::string& message) {
         if (log_stream_.is_open()) {
             log_stream_ << message << std::endl;
+            logged_msgs_++;
         } else {
             ROS_ERROR("Log file is not open.");
         }
@@ -91,6 +95,7 @@ private:
     std::string log_directory_;
     std::string log_file_path_;
     std::ofstream log_stream_;
+    int logged_msgs_;
 
     ros::Time logging_start_;
 };
