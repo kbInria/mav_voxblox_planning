@@ -5,20 +5,10 @@ FROM osrf/ros:noetic-desktop-full
 WORKDIR /opt/catkin_ws/
 
 # Install necessary packages
-RUN apt-get update && apt-get install -y \
-    git \
-    vim \
-    wget \
-    ros-noetic-cmake-modules \
-    libyaml-cpp-dev \
-    protobuf-compiler \
-    autoconf \
-    libompl-dev \
-    build-essential \
-    python3-rosdep \
-    python3-catkin-tools \
-    libtool \
-    && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt /tmp/requirements.txt
+RUN apt-get update && \
+    apt-get install -y $(cat /tmp/requirements.txt | cut -d'=' -f1) && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN catkin init \
     && catkin config --extend /opt/ros/noetic \
