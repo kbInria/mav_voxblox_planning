@@ -3,8 +3,6 @@
   <arg name="pointcloud_topic" default="velodyn/laser_scan"/>
   <arg name="frame_id" value="world" />
   <arg name="robot_radius" default="0.25" />
-  <arg name="voxel_size" default="0.25" />
-  <arg name="voxels_per_side" default="8" />
   <arg name="avoid_collisions" default="false" />
   <arg name="command_publishing_dt" default="40.0" />
   <arg name="v_max" default="6.0" />
@@ -23,8 +21,8 @@
       <remap from="mav_local_planner/tsdf_map_in" to="/voxblox_node/tsdf_map_out" />
       <param name="log_file" value="trajectory_$(arg drone_name)_0.txt" />
 
-      <param name="tsdf_voxel_size" value="$(arg voxel_size)" />
-      <param name="tsdf_voxels_per_side" value="$(arg voxels_per_side)" />
+      <param name="tsdf_voxel_size" command="rosparam get /voxel_size" />
+      <param name="tsdf_voxels_per_side" command="rosparam get /voxels_per_side" />
       <param name="esdf_max_distance_m" value="2.0" />
       <param name="update_mesh_every_n_sec" value="0.0" />
       <param name="traversability_radius" value="$(arg robot_radius)" />
@@ -76,8 +74,8 @@
       <remap from="mav_local_planner/tsdf_map_in" to="/voxblox_node/tsdf_map_out" />
       <param name="log_file" value="trajectory_$(arg drone_name)_1.txt" />
 
-      <param name="tsdf_voxel_size" value="$(arg voxel_size)" />
-      <param name="tsdf_voxels_per_side" value="$(arg voxels_per_side)" />
+      <param name="tsdf_voxel_size" command="rosparam get /voxel_size" />
+      <param name="tsdf_voxels_per_side" command="rosparam get /voxels_per_side" />
       <param name="esdf_max_distance_m" value="2.0" />
       <param name="update_mesh_every_n_sec" value="0.0" />
       <param name="traversability_radius" value="$(arg robot_radius)" />
