@@ -1,20 +1,9 @@
 <launch>
-  <arg name="drone_name" default="intelaero_bugwright"/>
-  <arg name="pointcloud_topic" default="velodyn/laser_scan"/>
-  <arg name="frame_id" value="world" />
-  <arg name="robot_radius" default="0.25" />
-  <arg name="avoid_collisions" default="false" />
-  <arg name="command_publishing_dt" default="40.0" />
-  <arg name="v_max" default="6.0" />
-  <arg name="a_max" default="0.8" />
-  <arg name="yaw_rate_max" default="0.2" />
-  <arg name="sampling_dt" default="0.3" />
-  <arg name="idle_queue_size" default="10" />
-  <arg name="min_speed_treshold" default="0.1" />
+
+  <!-- Loading mav_local_planner's parameters -->
+  <rosparam command="load" file="/root/params/mav_local_planner_params.yml" />
 
   <!-- Assigning one mav local planner per existing drone-->
-  <node pkg="mav_local_planner" type="mav_local_planner.sh" name="mav_local_planner_assigner" output="screen" 
-        args="$(arg avoid_collisions) $(arg command_publishing_dt) $(arg v_max) $(arg a_max)
-              $(arg yaw_rate_max) $(arg sampling_dt) $(arg idle_queue_size) $(arg min_speed_treshold)" />
+  <node pkg="mav_local_planner" type="mav_local_planner.sh" name="mav_local_planner_assigner" output="screen" args="" />
 
 </launch>
