@@ -10,8 +10,14 @@ add_definitions(-std=c++14 -Wall)
 # LIBRARIES #
 #############
 cs_add_library(${PROJECT_NAME}
-  src/mav_local_planner.cpp
+  src/mav_idle_checker.cpp
 )
+
+cs_add_library(${PROJECT_NAME}_idle_checker
+  src/mav_local_planner.cpp src/mav_idle_checker.cpp
+)
+
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_idle_checker)
 
 ############
 # BINARIES #

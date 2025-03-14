@@ -83,6 +83,8 @@ void MavLocalPlanner::setupRosCommunication() {
       nh_private_.advertise<trajectory_msgs::MultiDOFJointTrajectory>(
           "full_trajectory", 1, true);
 
+  id_idle_pub_ = nh_private_.advertise<std_msgs::Bool>("is_idle", 1, true);
+
   // Services.
   start_srv_ = nh_private_.advertiseService(
       "start", &MavLocalPlanner::startCallback, this);
@@ -157,10 +159,32 @@ void MavLocalPlanner::setupSmoothers() {
   loco_smoother_.setResampleTrajectory(true);
   loco_smoother_.setResampleVisibility(true);
   loco_smoother_.setNumSegments(5);
+
+  // Idle checker
+  int idle_queue_size = 10;
+  double min_speed_treshold = 0.1;
+  nh_private_.param("idle_queue_size", idle_queue_size, idle_queue_size);
+  nh_private_.param("min_speed_treshold", min_speed_treshold, min_speed_treshold);
+  idle_checker_ = IdleChecker(idle_queue_size, min_speed_treshold);
+
+  std::string log_dir = "/.ros/log/trajectories/";
+  std::string log_file = "trajectory.txt";
+  nh_private_.param("log_file", log_file, log_file);
+  logger_.Initialze(log_dir, log_file);
+  total_trajectory_length_ = 0.0;
+}
+
+MavLocalPlanner::~MavLocalPlanner() {
+  std::string last_message = "Stopping local planner. distance traveled: " + std::to_string(total_trajectory_length_) + " m." + "\n";
+  logger_.Log(last_message);
 }
 
 void MavLocalPlanner::odometryCallback(const nav_msgs::Odometry& msg) {
   mav_msgs::eigenOdometryFromMsg(msg, &odometry_);
+  idle_checker_.AddOdometry(msg);
+  std_msgs::Bool is_idle_msg;
+  is_idle_msg.data = idle_checker_.IsIdle();
+  id_idle_pub_.publish(is_idle_msg);
 }
 
 void MavLocalPlanner::waypointCallback(const geometry_msgs::PoseStamped& msg) {
@@ -883,6 +907,14 @@ void MavLocalPlanner::commandPublishTimerCallback(
                trajectory_to_publish.back().velocity_W.z());
     }
     mav_msgs::msgMultiDofJointTrajectoryFromEigen(trajectory_to_publish, &msg);
+
+    std::string initial_pose_string = "(" + std::to_string(trajectory_to_publish.front().position_W.x()) + ", " + std::to_string(trajectory_to_publish.front().position_W.y()) + ", " + std::to_string(trajectory_to_publish.front().position_W.z()) + ")";
+    std::string final_pose_string = "(" + std::to_string(trajectory_to_publish.back().position_W.x()) + ", " + std::to_string(trajectory_to_publish.back().position_W.y()) + ", " + std::to_string(trajectory_to_publish.back().position_W.z()) + ")";
+    double current_trajectory_length = computePathLength(trajectory_to_publish);
+    total_trajectory_length_ += current_trajectory_length;
+    std::string path_distance_string = std::to_string(current_trajectory_length) + " m";
+    std::string logger_message = "Publishing trajectory from " + initial_pose_string + " to " + final_pose_string + ". Total length = " + path_distance_string + "\n";
+    logger_.Log(logger_message);
 
     command_pub_.publish(msg);
     path_index_ += number_to_publish;

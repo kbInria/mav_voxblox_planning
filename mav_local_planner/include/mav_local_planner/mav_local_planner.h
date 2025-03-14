@@ -6,6 +6,7 @@
 #include <thread>
 #include <vector>
 
+#include <std_msgs/Bool.h>
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <mav_msgs/conversions.h>
@@ -26,11 +27,17 @@
 #include <voxblox_loco_planner/voxblox_loco_planner.h>
 #include <voxblox_ros/esdf_server.h>
 
+#include "mav_local_planner/mav_idle_checker.h"
+
+#include "mav_local_planner/logger/logger.h"
+
 namespace mav_planning {
 
 class MavLocalPlanner {
  public:
   MavLocalPlanner(const ros::NodeHandle& nh, const ros::NodeHandle& nh_private);
+  ~MavLocalPlanner();
+
   ~MavLocalPlanner();
 
   // Input data.
@@ -132,6 +139,10 @@ class MavLocalPlanner {
   ros::Publisher command_pub_;
   ros::Publisher path_marker_pub_;
   ros::Publisher full_trajectory_pub_;
+  ros::Publisher id_idle_pub_;
+
+  // Marker array to keep the full trajectory in memory
+  visualization_msgs::MarkerArray full_trajectory_marker_;
 
   // Service calls for controlling the local planner.
   // Start will start publishing commands, pause will stop temporarily and you
@@ -225,6 +236,13 @@ class MavLocalPlanner {
   // Intermediate goal selection, optionally in case of path-planning failures:
   GoalPointSelector goal_selector_;
   bool temporary_goal_;
+
+  // Idle checker
+  IdleChecker idle_checker_;
+
+  // Logger
+  Logger logger_;
+  double total_trajectory_length_;
 };
 
 }  // namespace mav_planning
