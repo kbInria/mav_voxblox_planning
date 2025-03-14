@@ -38,11 +38,6 @@ MavLocalPlanner::MavLocalPlanner(const ros::NodeHandle& nh,
   setupSmoothers();
 }
 
-MavLocalPlanner::~MavLocalPlanner() {
-  ROS_INFO_STREAM("[Mav Local Planner] Timings: \n"
-                      << mav_trajectory_generation::timing::Timing::Print());
-}
-
 void MavLocalPlanner::getParamsFromRos() {
   // Set up some settings.
   constraints_.setParametersFromRos(nh_private_);
@@ -175,6 +170,9 @@ void MavLocalPlanner::setupSmoothers() {
 }
 
 MavLocalPlanner::~MavLocalPlanner() {
+  ROS_INFO_STREAM("[Mav Local Planner] Timings: \n"
+                      << mav_trajectory_generation::timing::Timing::Print());
+
   std::string last_message = "Stopping local planner. distance traveled: " + std::to_string(total_trajectory_length_) + " m." + "\n";
   logger_.Log(last_message);
 }
