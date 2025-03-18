@@ -6,6 +6,7 @@
 
     <group ns="$(arg namespace)">
         <node name="mav_local_planner" pkg="mav_local_planner" type="mav_local_planner_node" args="-alsologtostderr" output="screen" clear_params="true">
+            <remap from="pointcloud" to="/all_pointclouds"/>
             <remap from="odometry" to="groundtruth/odom" />
             <remap from="waypoint" to="next_best_viewpoint" />
             <remap from="waypoint_list" to="next_best_viewpoint_list" />
@@ -33,11 +34,15 @@
             <param name="plan_to_start" value="true" />
             <param name="replan_lookahead_sec" value="1.0" />
             <param name="mpc_prediction_horizon" value="300" />
+            
+            <param name="clear_sphere_for_planning" value="true" />
+            <param name="clear_sphere_radius" value="2.0" />
+            <param name="occupied_sphere_radius" value="2.0" />
 
             <param name="robot_radius" value="$(arg robot_radius)" />
             <param name="planning_horizon_m" value="20.0" />
             <param name="autostart" value="true" />
-            <param name="verbose" value="true" />
+            <param name="verbose" value="false" />
             <!-- Parameters in charge of the curvature of trajectory -->
             <param name="v_max" command="rosparam get /mav_local_planner/v_max" />
             <param name="a_max" command="rosparam get /mav_local_planner/a_max" />
