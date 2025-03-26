@@ -19,7 +19,7 @@ RUN catkin init \
 WORKDIR /opt/catkin_ws/src/
 
 # Clone the repository and get the commit to be checkout at from the docker-compose.yaml file
-ARG BRANCH='dev/avenue'
+ARG BRANCH='dev/add_voxfield'
 ARG BRANCH_COMMIT=$BRANCH # Checkout the last commit per default
 RUN git clone --single-branch --branch $BRANCH https://github.com/kbInria/mav_voxblox_planning.git \ 
     && cd /opt/catkin_ws/src/mav_voxblox_planning/ \
