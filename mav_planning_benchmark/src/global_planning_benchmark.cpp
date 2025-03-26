@@ -51,7 +51,7 @@ void GlobalPlanningBenchmark::loadMap(const std::string& base_path,
   std::string sparse_graph_path = base_path + "/" + sparse_graph_name;
 
   // TODO(helenol): replace this with actually loading the stats from the map.
-  esdf_server_.reset(new voxblox::EsdfServer(nh_, nh_private_));
+  esdf_server_.reset(new voxblox::VoxbloxServer(nh_, nh_private_));
 
   if (!esdf_server_->loadMap(esdf_path)) {
     ROS_ERROR_STREAM("Couldn't load ESDF  from file: " << esdf_path);

@@ -102,7 +102,7 @@ class VoxbloxRrtPlanner {
   mav_msgs::EigenTrajectoryPointVector last_waypoints_;
 
   // Map!
-  voxblox::EsdfServer voxblox_server_;
+  voxblox::VoxbloxServer voxblox_server_;
   // Shortcuts to the maps:
   voxblox::EsdfMap::Ptr esdf_map_;
   voxblox::TsdfMap::Ptr tsdf_map_;
