@@ -13,7 +13,7 @@
 #include <mav_trajectory_generation/timing.h>
 #include <mav_visualization/helpers.h>
 #include <voxblox_planning_common/path_shortening.h>
-#include <voxblox_ros/esdf_server.h>
+#include "voxblox_ros/voxblox_server.h"
 #include <voxblox_skeleton/ros/skeleton_vis.h>
 #include <voxblox_skeleton/skeleton.h>
 #include <voxblox_skeleton/skeleton_generator.h>
@@ -68,7 +68,7 @@ class SkeletonGlobalPlanner {
   bool visualize_;
   double voxel_size_;  // Cache the size of the voxels used by the map.
 
-  voxblox::EsdfServer voxblox_server_;
+  voxblox::VoxbloxServer voxblox_server_;
   voxblox::SkeletonGenerator skeleton_generator_;
 
   // Planners of all sorts.

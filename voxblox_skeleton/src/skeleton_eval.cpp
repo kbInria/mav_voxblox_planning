@@ -59,7 +59,7 @@ class SkeletonEvalNode {
   bool apply_noise_;
   FloatingPoint noise_sigma_;
 
-  voxblox::EsdfServer voxblox_server_;
+  voxblox::VoxbloxServer voxblox_server_;
   voxblox::SimulationWorld world_;
 };
 
