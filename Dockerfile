@@ -33,6 +33,16 @@ RUN wstool init . /opt/catkin_ws/src/mav_voxblox_planning/install/install_https.
 # # Go back to the workspace root
 WORKDIR /opt/catkin_ws/
 
+# HACK: ugly way to ensure that the voxblox_ros repo used is the same as in map_frontiers
+RUN git clone https://github.com/BSportich/map-frontiers --no-checkout \
+    && cd map-frontiers/ \
+    && git sparse-checkout init \
+    && git sparse-checkout set voxblox voxblox_ros voxblox_msgs voxblox_rviz_plugin \
+    && git checkout merge/px4_nbv_selector \
+    && rm -rf /opt/catkin_ws/src/voxblox/voxblox_ros/ \
+    && mv voxblox* /opt/catkin_ws/src/ \
+    && cd /opt/catkin_ws/ && rm -rf map-frontiers/
+
 # Initialize and build the Catkin workspace
 # TODO: need to remove the catkin_ignore in mav_voxblox_planning/voxblox_rrt_planner before this build
 RUN catkin build protobuf_catkin \
