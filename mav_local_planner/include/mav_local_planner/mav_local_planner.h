@@ -25,7 +25,7 @@
 #include <minkindr_conversions/kindr_msg.h>
 #include <voxblox_loco_planner/goal_point_selector.h>
 #include <voxblox_loco_planner/voxblox_loco_planner.h>
-#include <voxblox_ros/esdf_server.h>
+#include "voxblox_ros/voxblox_server.h"
 
 #include "mav_local_planner/mav_idle_checker.h"
 
@@ -190,7 +190,7 @@ class MavLocalPlanner {
   int num_failures_;
 
   // Map!
-  voxblox::EsdfServer esdf_server_;
+  voxblox::VoxbloxServer esdf_server_;
 
   // Planners -- yaw policy
   YawPolicy yaw_policy_;

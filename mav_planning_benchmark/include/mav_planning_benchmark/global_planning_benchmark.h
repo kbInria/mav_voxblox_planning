@@ -5,7 +5,7 @@
 #include <mav_path_smoothing/polynomial_smoother.h>
 #include <mav_path_smoothing/velocity_ramp_smoother.h>
 #include <mav_planning_common/physical_constraints.h>
-#include <voxblox_ros/esdf_server.h>
+#include "voxblox_ros/voxblox_server.h"
 #include <voxblox_rrt_planner/voxblox_ompl_rrt.h>
 #include <voxblox_skeleton/io/skeleton_io.h>
 #include <voxblox_skeleton/skeleton_planner.h>
@@ -95,7 +95,7 @@ class GlobalPlanningBenchmark {
   std::string frame_id_;
 
   // Voxblox Server!
-  std::unique_ptr<voxblox::EsdfServer> esdf_server_;
+  std::unique_ptr<voxblox::VoxbloxServer> esdf_server_;
   // Skeleton sparse graph!
   voxblox::SparseSkeletonGraph skeleton_graph_;
 

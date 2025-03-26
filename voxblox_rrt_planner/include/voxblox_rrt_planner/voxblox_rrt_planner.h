@@ -18,7 +18,7 @@
 #include <mav_trajectory_generation_ros/ros_visualization.h>
 #include <mav_visualization/helpers.h>
 #include <minkindr_conversions/kindr_msg.h>
-#include <voxblox_ros/esdf_server.h>
+#include "voxblox_ros/voxblox_server.h"
 
 #include "voxblox_rrt_planner/voxblox_ompl_rrt.h"
 

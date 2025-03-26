@@ -6,7 +6,7 @@
 #include <voxblox/simulation/simulation_world.h>
 #include <voxblox_loco_planner/goal_point_selector.h>
 #include <voxblox_loco_planner/voxblox_loco_planner.h>
-#include <voxblox_ros/esdf_server.h>
+#include "voxblox_ros/voxblox_server.h"
 
 namespace mav_planning {
 
@@ -122,7 +122,7 @@ class LocalPlanningBenchmark {
   double density_;
 
   // Voxblox Server!
-  voxblox::EsdfServer esdf_server_;
+  voxblox::VoxbloxServer esdf_server_;
   voxblox::SimulationWorld world_;
 
   // Planners will go here!
