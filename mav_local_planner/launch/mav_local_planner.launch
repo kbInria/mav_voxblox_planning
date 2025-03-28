@@ -14,8 +14,8 @@
             <remap from="mav_local_planner/tsdf_map_in" to="/voxblox_node/tsdf_map_out" />
             <param name="log_file" value="trajectory_$(arg namespace).txt" />
 
-            <param name="tsdf_voxel_size" command="rosparam get /voxel_size" />
-            <param name="tsdf_voxels_per_side" command="rosparam get /voxels_per_side" />
+            <param name="tsdf_voxel_size" type="double" command="rosparam get /voxel_size" />
+            <param name="tsdf_voxels_per_side" type="int" command="rosparam get /voxels_per_side" />
             <param name="esdf_max_distance_m" value="2.0" />
             <param name="update_mesh_every_n_sec" value="0.0" />
             <param name="traversability_radius" value="$(arg robot_radius)" />
@@ -26,11 +26,11 @@
             <param name="local_frame_id" value="$(arg frame_id)" />
             <param name="world_frame" value="$(arg frame_id)" />
             <!-- HACK: "disabling" command publishing -->
-            <param name="command_publishing_dt" command="rosparam get /mav_local_planner/command_publishing_dt" />
+            <param name="command_publishing_dt" type="double" command="rosparam get /mav_local_planner/command_publishing_dt" />
             <!-- No need to replan if no command is republished -->
-            <param name="replan_dt" command="rosparam get /mav_local_planner/command_publishing_dt" />
+            <param name="replan_dt" type="double" command="rosparam get /mav_local_planner/command_publishing_dt" />
             <!-- Important parameter to control how the drone will follow the trajectory -->
-            <param name="sampling_dt" command="rosparam get /mav_local_planner/sampling_dt" />
+            <param name="sampling_dt" type="double" command="rosparam get /mav_local_planner/sampling_dt" />
             <param name="plan_to_start" value="true" />
             <param name="replan_lookahead_sec" value="1.0" />
             <param name="mpc_prediction_horizon" value="300" />
@@ -44,11 +44,11 @@
             <param name="autostart" value="true" />
             <param name="verbose" value="false" />
             <!-- Parameters in charge of the curvature of trajectory -->
-            <param name="v_max" command="rosparam get /mav_local_planner/v_max" />
-            <param name="a_max" command="rosparam get /mav_local_planner/a_max" />
-            <param name="yaw_rate_max" command="rosparam get /mav_local_planner/yaw_rate_max" />
+            <param name="v_max" type="double" command="rosparam get /mav_local_planner/v_max" />
+            <param name="a_max" type="double" command="rosparam get /mav_local_planner/a_max" />
+            <param name="yaw_rate_max" type="double" command="rosparam get /mav_local_planner/yaw_rate_max" />
             <!-- TODO: currently avoid collision do not work but should look into it -->
-            <param name="avoid_collisions" command="rosparam get /mav_local_planner/avoid_collisions"  />
+            <param name="avoid_collisions" type="bool" command="rosparam get /mav_local_planner/avoid_collisions"  />
 
             <!-- What to do in case of failure. -->
             <param name="goal_selector_strategy" value="none" />
@@ -57,8 +57,8 @@
             <param name="use_shotgun_path" value="true" />
 
             <!-- Parameters for idle checker -->
-            <param name="idle_queue_size" command="rosparam get /mav_local_planner/idle_queue_size" />
-            <param name="min_speed_treshold" command="rosparam get /mav_local_planner/min_speed_treshold" />
+            <param name="idle_queue_size" type="int" command="rosparam get /mav_local_planner/idle_queue_size" />
+            <param name="min_speed_treshold" type="double" command="rosparam get /mav_local_planner/min_speed_treshold" />
         </node>
     </group>
 </launch>
