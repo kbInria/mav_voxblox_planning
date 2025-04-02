@@ -34,7 +34,9 @@ RUN wstool init . /opt/catkin_ws/src/mav_voxblox_planning/install/install_https.
 WORKDIR /opt/catkin_ws/
 
 # HACK: ugly way to ensure that the voxblox_ros repo used is the same as in map_frontiers
-RUN git clone https://github.com/BSportich/map-frontiers --no-checkout \
+ARG VOXBLOX_BRANCH='dev/avenue'
+ARG VOXBLOX_BRANCH_COMMIT=$VOXBLOX_BRANCH # Checkout the last commit per default
+RUN git clone --single-branch --branch $VOXBLOX_BRANCH_COMMIT https://github.com/BSportich/map-frontiers --no-checkout \
     && cd map-frontiers/ \
     && git sparse-checkout init \
     && git sparse-checkout set voxblox voxblox_ros voxblox_msgs voxblox_rviz_plugin \
