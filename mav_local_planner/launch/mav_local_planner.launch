@@ -28,7 +28,7 @@
             <!-- HACK: "disabling" command publishing -->
             <param name="command_publishing_dt" type="double" command="rosparam get /mav_local_planner/command_publishing_dt" />
             <!-- No need to replan if no command is republished -->
-            <param name="replan_dt" type="double" command="rosparam get /mav_local_planner/command_publishing_dt" />
+            <param name="replan_dt" type="double" command="rosparam get /mav_local_planner/replan_dt" />
             <!-- Important parameter to control how the drone will follow the trajectory -->
             <param name="sampling_dt" type="double" command="rosparam get /mav_local_planner/sampling_dt" />
             <param name="plan_to_start" value="true" />
@@ -43,6 +43,7 @@
             <param name="planning_horizon_m" value="20.0" />
             <param name="autostart" value="true" />
             <param name="verbose" value="false" />
+            <param name="timing" value="false" />
             <!-- Parameters in charge of the curvature of trajectory -->
             <param name="v_max" type="double" command="rosparam get /mav_local_planner/v_max" />
             <param name="a_max" type="double" command="rosparam get /mav_local_planner/a_max" />
