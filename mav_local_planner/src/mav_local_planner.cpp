@@ -358,7 +358,6 @@ void MavLocalPlanner::avoidCollisionsTowardWaypoint() {
         path_chunk.push_back(path_queue_.back());
         if (!nextWaypoint()) {
           finishWaypoints();
-          path_chunk.push_back(waypoints_.back());
         }
       }
     }
@@ -376,8 +375,6 @@ void MavLocalPlanner::avoidCollisionsTowardWaypoint() {
             "[Mav Local Planner][Plan Step] Current plan is valid, just "
             "rollin' with it.");
         nextWaypoint();
-        // if (!nextWaypoint())
-        //   path_queue_.push_back(waypoints_[current_waypoint_]);
         return;
       }
     }
@@ -402,8 +399,6 @@ void MavLocalPlanner::avoidCollisionsTowardWaypoint() {
       ROS_INFO("[Mav Local Planner][Plan Step] Appending new path chunk.");
       if (trajectory.getMaxTime() <= 1e-6) {
         nextWaypoint();
-        // if (!nextWaypoint())
-        //   path_queue_.push_back(waypoints_[current_waypoint_]);
       } else {
         num_failures_ = 0;
         mav_msgs::EigenTrajectoryPointVector new_path_chunk;
@@ -441,7 +436,6 @@ void MavLocalPlanner::avoidCollisionsTowardWaypoint() {
       if (nextWaypoint()) {
         waypoint = waypoints_[current_waypoint_];
       } else {
-        path_queue_.push_back(waypoints_[current_waypoint_]);
         return;
       }
     }
@@ -452,8 +446,7 @@ void MavLocalPlanner::avoidCollisionsTowardWaypoint() {
 
     if (success) {
       if (trajectory.getMaxTime() <= 0.1) {
-        if (!nextWaypoint())
-          path_queue_.push_back(waypoints_[current_waypoint_]);
+        nextWaypoint();
       } else {
         // Copy this straight into the queue.
         num_failures_ = 0;
