@@ -59,7 +59,8 @@ class MavLocalPlanner {
                     std_srvs::Empty::Response& response);
 
   // Visualizations.
-  void visualizePath();
+  void visualizeFullPath();
+  void visualizeCurrentPath();
 
   // TODO -- TO IMPLEMENT:
   void polynomialTrajectoryCallback(
@@ -212,6 +213,9 @@ class MavLocalPlanner {
 
   // Logger
   Logger logger_;
+  ros::Time last_logged_odom_;
+  mav_msgs::EigenTrajectoryPointVector current_logged_trajectory_;
+  int number_of_trajectories = 0;
   double total_trajectory_length_;
 };
 

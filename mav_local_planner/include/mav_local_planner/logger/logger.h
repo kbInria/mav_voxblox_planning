@@ -38,6 +38,11 @@ public:
         logged_msgs_ = 0;
     }
 
+    int GetNumberOfLoggedMsgs()
+    {
+        return logged_msgs_;
+    }
+
     void Initialze(const std::string log_directory, const std::string log_file) 
     {
         std::cout << "log_directory: " << log_directory << std::endl;

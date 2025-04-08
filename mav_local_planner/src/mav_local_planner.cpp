@@ -61,10 +61,10 @@ MavLocalPlanner::MavLocalPlanner(const ros::NodeHandle& nh,
   command_pub_ = nh_.advertise<trajectory_msgs::MultiDOFJointTrajectory>(
       mav_msgs::default_topics::COMMAND_TRAJECTORY, 1);
 
-  path_marker_pub_ = nh_private_.advertise<visualization_msgs::MarkerArray>(
+  path_marker_pub_ = nh_private_.advertise<visualization_msgs::Marker>(
       "local_path", 1, true);
   full_trajectory_pub_ =
-      nh_private_.advertise<trajectory_msgs::MultiDOFJointTrajectory>(
+      nh_private_.advertise<visualization_msgs::MarkerArray>(
           "full_trajectory", 1, true);
 
   id_idle_pub_ = nh_private_.advertise<std_msgs::Bool>("is_idle", 1, true);
@@ -133,6 +133,7 @@ MavLocalPlanner::MavLocalPlanner(const ros::NodeHandle& nh,
   nh_private_.param("log_file", log_file, log_file);
   logger_.Initialze(log_dir, log_file);
   total_trajectory_length_ = 0.0;
+  last_logged_odom_ = ros::Time::now();
 }
 
 MavLocalPlanner::~MavLocalPlanner() {
@@ -142,6 +143,14 @@ MavLocalPlanner::~MavLocalPlanner() {
 
 void MavLocalPlanner::odometryCallback(const nav_msgs::Odometry& msg) {
   mav_msgs::eigenOdometryFromMsg(msg, &odometry_);
+  ros::Duration time_since_last_logged_odom = ros::Time::now() - last_logged_odom_ ; 
+  if (time_since_last_logged_odom.toSec() > constraints_.sampling_dt) {
+    mav_msgs::EigenTrajectoryPoint current_point;
+    current_point.position_W = odometry_.position_W;
+    current_point.orientation_W_B = odometry_.orientation_W_B;
+    current_logged_trajectory_.push_back(current_point);
+    last_logged_odom_ = ros::Time::now();
+  }
   idle_checker_.AddOdometry(msg);
   std_msgs::Bool is_idle_msg;
   is_idle_msg.data = idle_checker_.IsIdle();
@@ -160,10 +169,12 @@ void MavLocalPlanner::waypointCallback(const geometry_msgs::PoseStamped& msg) {
   waypoints_.clear();
   waypoints_.push_back(waypoint);
   current_waypoint_ = 0;
+  number_of_trajectories++;
 
   // Execute one planning step on main thread.
   planningStep();
   startPublishingCommands();
+  number_of_trajectories++;
 }
 
 void MavLocalPlanner::waypointListCallback(
@@ -312,7 +323,7 @@ void MavLocalPlanner::planningStep() {
 
   ROS_INFO("[Mav Local Planner][Plan Step] Planning finished. Time taken: %f",
            timer.stop());
-  visualizePath();
+  visualizeCurrentPath();
 }
 
 void MavLocalPlanner::avoidCollisionsTowardWaypoint() {
@@ -576,14 +587,19 @@ void MavLocalPlanner::commandPublishTimerCallback(
         trajectory_to_publish.back().position_W.x());
     mav_msgs::msgMultiDofJointTrajectoryFromEigen(trajectory_to_publish, &msg);
 
-    std::string initial_pose_string = "(" + std::to_string(trajectory_to_publish.front().position_W.x()) + ", " + std::to_string(trajectory_to_publish.front().position_W.y()) + ", " + std::to_string(trajectory_to_publish.front().position_W.z()) + ")";
-    std::string final_pose_string = "(" + std::to_string(trajectory_to_publish.back().position_W.x()) + ", " + std::to_string(trajectory_to_publish.back().position_W.y()) + ", " + std::to_string(trajectory_to_publish.back().position_W.z()) + ")";
-    double current_trajectory_length = computePathLength(trajectory_to_publish);
-    total_trajectory_length_ += current_trajectory_length;
-    std::string path_distance_string = std::to_string(current_trajectory_length) + " m";
-    std::string logger_message = "Publishing trajectory from " + initial_pose_string + " to " + final_pose_string + ". Total length = " + path_distance_string + "\n";
-    logger_.Log(logger_message);
-
+    // If we have received a new trajectory, logging the previous one
+    if (number_of_trajectories > logger_.GetNumberOfLoggedMsgs())
+    {
+      std::string initial_pose_string = "(" + std::to_string(current_logged_trajectory_.front().position_W.x()) + ", " + std::to_string(current_logged_trajectory_.front().position_W.y()) + ", " + std::to_string(current_logged_trajectory_.front().position_W.z()) + ")";
+      std::string final_pose_string = "(" + std::to_string(current_logged_trajectory_.back().position_W.x()) + ", " + std::to_string(current_logged_trajectory_.back().position_W.y()) + ", " + std::to_string(current_logged_trajectory_.back().position_W.z()) + ")";
+      double current_trajectory_length = computePathLength(current_logged_trajectory_);
+      total_trajectory_length_ += current_trajectory_length;
+      std::string path_distance_string = std::to_string(current_trajectory_length) + " m";
+      std::string logger_message = "Publishing trajectory from " + initial_pose_string + " to " + final_pose_string + ". Total length = " + path_distance_string + "\n";
+      logger_.Log(logger_message);
+      visualizeFullPath();
+      current_logged_trajectory_.clear();
+    }
     command_pub_.publish(msg);
     path_index_ += number_to_publish;
     should_replan_.notify();
@@ -645,19 +661,33 @@ bool MavLocalPlanner::stopCallback(std_srvs::Empty::Request& request,
   return true;
 }
 
-void MavLocalPlanner::visualizePath() {
+void MavLocalPlanner::visualizeFullPath() {
+  // TODO: Split trajectory into two chunks: before and after.
+  visualization_msgs::Marker path_marker;
+  {
+    std::lock_guard<std::recursive_mutex> guard(path_mutex_);
+
+    path_marker = createMarkerForPath(current_logged_trajectory_, local_frame_id_,
+                                      mav_visualization::Color::Black(),
+                                      "full_path", 0.05);
+    path_marker.id = full_trajectory_marker_.markers.size();
+  }
+  full_trajectory_marker_.markers.push_back(path_marker);
+  full_trajectory_pub_.publish(full_trajectory_marker_);
+}
+
+void MavLocalPlanner::visualizeCurrentPath() {
   // TODO: Split trajectory into two chunks: before and after.
   visualization_msgs::Marker path_marker;
   {
     std::lock_guard<std::recursive_mutex> guard(path_mutex_);
 
     path_marker = createMarkerForPath(path_queue_, local_frame_id_,
-                                      mav_visualization::Color::Black(),
-                                      "local_path", 0.05);
-    path_marker.id = full_trajectory_marker_.markers.size();
+                                      mav_visualization::Color::Red(),
+                                      "local_path", 0.1);
+    path_marker.id = 0;
   }
-  full_trajectory_marker_.markers.push_back(path_marker);
-  path_marker_pub_.publish(full_trajectory_marker_);
+  path_marker_pub_.publish(path_marker);
 }
 
 double MavLocalPlanner::getMapDistance(const Eigen::Vector3d& position) const {
