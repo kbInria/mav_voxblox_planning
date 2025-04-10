@@ -17,7 +17,7 @@
             <param name="tsdf_voxels_per_side" type="int" command="rosparam get /voxels_per_side" />
             <param name="esdf_max_distance_m" value="2.0" />
             <param name="update_mesh_every_n_sec" value="0.0" />
-            <param name="traversability_radius" type="double" command="rosparam get /robot_radius" />
+            <param name="traversability_radius" type="double" command="rosparam get /mav_local_planner/robot_radius" />
             <param name="publish_traversable" value="true" />
             <param name="slice_level" value="1.0" />
             <param name="publish_slices" value="true" />
@@ -38,7 +38,7 @@
             <param name="clear_sphere_radius" value="2.0" />
             <param name="occupied_sphere_radius" value="2.0" />
 
-            <param name="robot_radius" type="double" command="rosparam get /robot_radius" />
+            <param name="robot_radius" type="double" command="rosparam get /mav_local_planner/robot_radius" />
             <param name="planning_horizon_m" value="20.0" />
             <param name="autostart" value="true" />
             <param name="verbose" value="false" />
