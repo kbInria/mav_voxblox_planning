@@ -470,6 +470,20 @@ void MavLocalPlanner::avoidCollisionsTowardWaypoint() {
       dealWithFailure();
     }
   }
+  if (!path_queue_.empty() && !waypoints_.empty()){
+    // If the last point of the path is close to the last waypoint,
+    // add the last waypoint to the path to keep the same orientation
+    mav_msgs::EigenTrajectoryPoint lastPathPoint = path_queue_[path_queue_.size() - 1];
+    constexpr double kCloseToOdometry = 0.1;
+    if ((lastPathPoint.position_W - waypoints_.back().position_W).norm() <= kCloseToOdometry) {
+      ROS_INFO_STREAM("[Mav Local Planner][Plan Step] Adding final waypoint with orientation: "
+                    << lastPathPoint.orientation_W_B.w() << ", "
+                    << lastPathPoint.orientation_W_B.x() << ", "
+                    << lastPathPoint.orientation_W_B.y() << ", "
+                    << lastPathPoint.orientation_W_B.z() << ")");
+      path_queue_.push_back(waypoints_.back());
+    }
+  }
 }
 
 bool MavLocalPlanner::planPathThroughWaypoints(
