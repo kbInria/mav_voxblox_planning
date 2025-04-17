@@ -1,0 +1,9 @@
+<launch>
+
+  <!-- Loading mav_local_planner's parameters -->
+  <rosparam command="load" file="/root/params/mav_local_planner_params.yml" />
+
+  <!-- Assigning one mav local planner per existing drone-->
+  <node pkg="mav_local_planner" type="mav_local_planner.sh" name="mav_local_planner_assigner" output="screen" args="" />
+
+</launch>

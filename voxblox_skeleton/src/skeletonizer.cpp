@@ -3,7 +3,7 @@
 #include <voxblox/integrator/merge_integration.h>
 
 #include <voxblox_ros/conversions.h>
-#include <voxblox_ros/esdf_server.h>
+#include "voxblox_ros/voxblox_server.h"
 #include <voxblox_ros/mesh_pcl.h>
 #include <voxblox_ros/mesh_vis.h>
 #include <voxblox_ros/ptcloud_vis.h>
@@ -43,7 +43,7 @@ class SkeletonizerNode {
   ros::Publisher skeleton_pub_;
   ros::Publisher sparse_graph_pub_;
 
-  EsdfServer esdf_server_;
+  VoxbloxServer esdf_server_;
 
   SkeletonGenerator skeleton_generator_;
 };

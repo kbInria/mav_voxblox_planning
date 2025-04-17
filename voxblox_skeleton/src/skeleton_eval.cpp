@@ -7,7 +7,7 @@
 #include <voxblox/mesh/mesh_integrator.h>
 #include <voxblox/simulation/simulation_world.h>
 #include <voxblox_ros/conversions.h>
-#include <voxblox_ros/esdf_server.h>
+#include "voxblox_ros/voxblox_server.h"
 #include <voxblox_ros/mesh_vis.h>
 #include <voxblox_ros/ptcloud_vis.h>
 #include <voxblox_ros/ros_params.h>
@@ -59,7 +59,7 @@ class SkeletonEvalNode {
   bool apply_noise_;
   FloatingPoint noise_sigma_;
 
-  voxblox::EsdfServer voxblox_server_;
+  voxblox::VoxbloxServer voxblox_server_;
   voxblox::SimulationWorld world_;
 };
 
