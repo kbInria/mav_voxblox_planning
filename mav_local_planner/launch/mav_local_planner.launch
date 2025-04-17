@@ -31,12 +31,12 @@
             <!-- Important parameter to control how the drone will follow the trajectory -->
             <param name="sampling_dt" type="double" command="rosparam get /mav_local_planner/sampling_dt" />
             <param name="plan_to_start" value="true" />
-            <param name="replan_lookahead_sec" value="1.0" />
+            <param name="replan_lookahead_sec" value="0.1" />
             <param name="mpc_prediction_horizon" value="300" />
             
-            <param name="clear_sphere_for_planning" value="true" />
+            <!-- <param name="clear_sphere_for_planning" value="true" />
             <param name="clear_sphere_radius" value="2.0" />
-            <param name="occupied_sphere_radius" value="2.0" />
+            <param name="occupied_sphere_radius" value="2.0" /> -->
 
             <param name="robot_radius" type="double" command="rosparam get /mav_local_planner/robot_radius" />
             <param name="planning_horizon_m" value="20.0" />
